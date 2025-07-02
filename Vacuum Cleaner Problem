@@ -1,0 +1,39 @@
+# Initial environment setup
+# You can change the values here
+environment = {
+    'A': 'Dirty',
+    'B': 'Dirty'
+}
+
+# Start at room A
+vacuum_location = 'A'
+
+def vacuum_cleaner(environment, location):
+    actions = []
+    print(f"Initial State: {environment}, Vacuum at: {location}\n")
+
+    for _ in range(2):
+        if environment[location] == 'Dirty':
+            actions.append(f"Clean {location}")
+            environment[location] = 'Clean'
+        else:
+            actions.append(f"{location} is already clean")
+
+        # Move to the other room
+        if location == 'A':
+            actions.append("Move Right to B")
+            location = 'B'
+        else:
+            actions.append("Move Left to A")
+            location = 'A'
+
+    print("Final State:", environment)
+    return actions
+
+# Run the agent
+actions_taken = vacuum_cleaner(environment.copy(), vacuum_location)
+
+# Print the actions
+print("\nActions taken:")
+for action in actions_taken:
+    print("-", action)
