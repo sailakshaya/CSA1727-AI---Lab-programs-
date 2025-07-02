@@ -1,0 +1,57 @@
+from collections import deque
+
+def is_goal(state):
+    return state[0] == 2 or state[1] == 2  # Goal: 2 liters in any jug
+
+def get_next_states(state):
+    a, b = state
+    max_a, max_b = 4, 3
+    next_states = []
+
+    # Fill Jug A
+    next_states.append((max_a, b))
+    # Fill Jug B
+    next_states.append((a, max_b))
+    # Empty Jug A
+    next_states.append((0, b))
+    # Empty Jug B
+    next_states.append((a, 0))
+    # Pour A -> B
+    pour = min(a, max_b - b)
+    next_states.append((a - pour, b + pour))
+    # Pour B -> A
+    pour = min(b, max_a - a)
+    next_states.append((a + pour, b - pour))
+
+    return next_states
+
+def bfs(start):
+    visited = set()
+    queue = deque([(start, [])])  # state, path
+
+    while queue:
+        state, path = queue.popleft()
+
+        if state in visited:
+            continue
+        visited.add(state)
+
+        if is_goal(state):
+            path.append(state)
+            return path
+
+        for next_state in get_next_states(state):
+            queue.append((next_state, path + [state]))
+
+    return None
+
+# Initial state: both jugs empty
+solution = bfs((0, 0))
+
+# Print the solution steps
+if solution:
+    print("Steps to reach the goal (2 liters):\n")
+    for step in solution:
+        print(f"Jug A: {step[0]} | Jug B: {step[1]}")
+else:
+    print("No solution found.")
