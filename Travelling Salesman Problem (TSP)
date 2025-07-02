@@ -1,0 +1,42 @@
+import itertools
+
+# Distance matrix (symmetric)
+# Cities: 0, 1, 2, 3
+distances = [
+    [0, 10, 15, 20],  # from city 0
+    [10, 0, 35, 25],  # from city 1
+    [15, 35, 0, 30],  # from city 2
+    [20, 25, 30, 0]   # from city 3
+]
+
+# Total number of cities
+n = len(distances)
+
+# Cities to visit (excluding the starting point 0)
+cities = list(range(1, n))
+
+# Initialize minimum path and cost
+min_cost = float('inf')
+best_path = []
+
+# Try all possible city orders
+for perm in itertools.permutations(cities):
+    current_cost = 0
+    k = 0  # start from city 0
+
+    # Go through current permutation
+    for j in perm:
+        current_cost += distances[k][j]
+        k = j
+
+    # Return to starting city
+    current_cost += distances[k][0]
+
+    # Update minimum if better path found
+    if current_cost < min_cost:
+        min_cost = current_cost
+        best_path = (0,) + perm + (0,)
+
+# Output the result
+print("Best path:", best_path)
+print("Minimum cost:", min_cost)
