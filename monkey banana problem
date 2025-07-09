@@ -1,0 +1,17 @@
+% Define the initial state
+state(monkey(at_ground), box(at_ground), bananas(at_high)).
+
+% Define actions
+action(reach_banana, state(monkey(at_ground), box(at_ground), bananas(at_high)), state(monkey(has_banana), box(at_ground), bananas(at_high))).
+action(climb_box, state(monkey(at_ground), box(at_ground), bananas(at_high)), state(monkey(at_box), box(at_ground), bananas(at_high))).
+action(grab_banana, state(monkey(at_box), box(at_ground), bananas(at_high)), state(monkey(has_banana), box(at_ground), bananas(at_high))).
+
+% Define the goal
+goal(state(monkey(has_banana), box(at_ground), bananas(at_high))).
+
+% Define the plan to achieve the goal
+plan(State, Goal) :- 
+    action(Action, State, NewState),
+    write(Action), nl,
+    plan(NewState, Goal).
+plan(State, State).
