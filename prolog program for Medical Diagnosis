@@ -1,0 +1,20 @@
+% Facts: defining symptoms and their corresponding diseases
+symptom(fever).
+symptom(cough).
+symptom(headache).
+symptom(sore_throat).
+symptom(fatigue).
+
+disease(flu, [fever, cough, headache]).
+disease(cold, [cough, sore_throat, fatigue]).
+disease(migraine, [headache, fatigue]).
+
+% Rule: to diagnose a disease based on symptoms
+diagnose(Disease) :- 
+    disease(Disease, Symptoms),
+    findall(Symptom, symptom(Symptom), Symptoms),
+    subset(Symptoms, Symptoms).
+
+% Helper predicate to check if all elements of a list are in another list
+subset([], _).
+subset([H|T], List) :- member(H, List), subset(T, List).
