@@ -1,0 +1,13 @@
+% Define some facts
+animal(dog).
+animal(cat).
+animal(bird).
+
+% Define a rule for identifying pets
+is_pet(X) :- animal(X), (X = dog; X = cat).
+
+% Query to find out if a given animal is a pet
+check_pet(Animal) :- 
+    is_pet(Animal) -> 
+    format('~w is a pet.', [Animal]) ; 
+    format('~w is not a pet.', [Animal]).
