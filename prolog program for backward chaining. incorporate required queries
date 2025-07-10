@@ -1,0 +1,107 @@
+% This Prolog program demonstrates backward chaining.
+% Backward chaining starts from a goal and works backward through rules
+% to find facts that support the goal.
+
+% --- Facts (Base knowledge) ---
+
+% animal(Name, Type).
+% Defines an animal and its general type.
+animal(fido, dog).
+animal(whiskers, cat).
+animal(polly, parrot).
+animal(leo, lion).
+animal(bambi, deer).
+
+% eats(Animal, Food).
+% Defines what an animal eats.
+eats(fido, meat).
+eats(fido, kibble).
+eats(whiskers, fish).
+eats(whiskers, cat_food).
+eats(polly, seeds).
+eats(leo, meat).
+eats(bambi, plants).
+
+% has_feature(Animal, Feature).
+% Defines specific features of an animal.
+has_feature(fido, barks).
+has_feature(whiskers, purrs).
+has_feature(leo, mane).
+has_feature(polly, talks).
+has_feature(bambi, antlers).
+
+% --- Rules (Inference knowledge, demonstrating backward chaining) ---
+
+% is_carnivore(Animal) :- eats(Animal, meat).
+% An animal is a carnivore if it eats meat.
+is_carnivore(Animal) :-
+    eats(Animal, meat).
+
+% is_herbivore(Animal) :- eats(Animal, plants).
+% An animal is a herbivore if it eats plants.
+is_herbivore(Animal) :-
+    eats(Animal, plants).
+
+% is_pet(Animal) :- animal(Animal, Type), (Type = dog ; Type = cat ; Type = parrot).
+% An animal is a pet if its type is dog, cat, or parrot.
+is_pet(Animal) :-
+    animal(Animal, Type),
+    (Type = dog ; Type = cat ; Type = parrot).
+
+% can_be_dangerous(Animal) :- is_carnivore(Animal), \+ is_pet(Animal).
+% An animal can be dangerous if it's a carnivore and not a pet.
+can_be_dangerous(Animal) :-
+    is_carnivore(Animal),
+    \+ is_pet(Animal). % '\+' means negation as failure (not provable)
+
+% Example queries:
+
+% 1. Is Fido a carnivore?
+% Goal: is_carnivore(fido).
+% Prolog looks for a rule for is_carnivore. It finds: is_carnivore(Animal) :- eats(Animal, meat).
+% It tries to satisfy eats(fido, meat).
+% It finds the fact eats(fido, meat).
+% Result: true.
+% ?- is_carnivore(fido).
+% true.
+
+% 2. What animals are carnivores?
+% Goal: is_carnivore(Animal).
+% Prolog tries to satisfy eats(Animal, meat).
+% It finds eats(fido, meat) -> Animal = fido.
+% It finds eats(leo, meat) -> Animal = leo.
+% Result:
+% ?- is_carnivore(Animal).
+% Animal = fido ;
+% Animal = leo.
+
+% 3. Can Leo be dangerous?
+% Goal: can_be_dangerous(leo).
+% Prolog looks for a rule for can_be_dangerous. It finds:
+% can_be_dangerous(Animal) :- is_carnivore(Animal), \+ is_pet(Animal).
+% It tries to satisfy is_carnivore(leo).
+%   This leads to eats(leo, meat), which is true. So, is_carnivore(leo) is true.
+% Next, it tries to satisfy \+ is_pet(leo).
+%   It tries to prove is_pet(leo).
+%     This leads to animal(leo, Type), (Type = dog ; Type = cat ; Type = parrot).
+%     animal(leo, lion) is found. 'lion' is not 'dog', 'cat', or 'parrot'.
+%     So, is_pet(leo) fails.
+%   Since is_pet(leo) fails, \+ is_pet(leo) succeeds.
+% Both parts of the can_be_dangerous rule are satisfied.
+% Result:
+% ?- can_be_dangerous(leo).
+% true.
+
+% 4. What animals can be dangerous?
+% ?- can_be_dangerous(Animal).
+% Animal = leo.
+
+% 5. What animals are pets?
+% ?- is_pet(Animal).
+% Animal = fido ;
+% Animal = whiskers ;
+% Animal = polly.
+
+% 6. Is Bambi a carnivore?
+% ?- is_carnivore(bambi).
+% false.
